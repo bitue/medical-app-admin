@@ -52,13 +52,18 @@ const data = {
           title: 'Doctor Approval',
           url: 'doctor-approval'
         },
-        {
-          title: 'Emergency Ambulance',
-          url: 'emergency-ambulance'
-        },
+       
+        // {
+        //   title: 'Emergency Service ',
+        //   url: 'emergency-service'
+        // },
         {
           title: 'Report Delivery',
           url: 'report-delivery'
+        },
+        {
+          title: 'Emergency',
+          url: 'emergency'
         }
         // {
         //   title: 'Optimizing',
