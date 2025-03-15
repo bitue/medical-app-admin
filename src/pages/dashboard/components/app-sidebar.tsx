@@ -36,14 +36,14 @@ const data = {
       title: 'Dashboard Management',
       url: '#',
       items: [
-        {
-          title: 'Patient Information',
-          url: 'patient-information'
-        },
-        {
-          title: 'Patient Search',
-          url: 'patient-search'
-        },
+        // {
+        //   title: 'Patient Information',
+        //   url: 'patient-information'
+        // },
+        // {
+        //   title: 'Patient Search',
+        //   url: 'patient-search'
+        // },
         {
           title: 'Appointments',
           url: 'appointments',
@@ -64,6 +64,20 @@ const data = {
         {
           title: 'Emergency',
           url: 'emergency'
+        }
+        ,
+        {
+          title: 'patientSearch',
+          url: 'patientSearch'
+        },
+        
+        {
+          title: 'Emergency Ambulance',
+          url: 'emergencyAmbulance'
+        },
+        {
+          title: 'data Recovery',
+          url: 'systemDataRecovery'
         }
         // {
         //   title: 'Optimizing',

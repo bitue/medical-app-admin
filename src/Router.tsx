@@ -6,6 +6,7 @@ import PatientSearch from "./pages/dashboard/dashboard-pages/patient-search";
 import AppointmentsGrid from "./pages/dashboard/dashboard-pages/appointments";
 import DoctorsGrid from "./pages/dashboard/dashboard-pages/doctors";
 import EmergencyPage from "./pages/dashboard/dashboard-pages/Emergency";
+import PatientDetailsPage from "./pages/dashboard/dashboard-pages/PatientDetailsPage";
 
 export function Router() {
   return (
@@ -20,8 +21,9 @@ export function Router() {
           <Route path="doctor-approval" element={<DoctorsGrid />} />
           <Route path="emergency" element={<EmergencyPage />} />
           <Route path="report-delivery" element={<div><h1>Working on it ....Directly share new Medical Reports to the Patient after approval to the appointed Doctor </h1></div>} />
-          
-          
+          <Route path="patientSearch" element={<PatientDetailsPage/>} />
+          <Route path="emergencyAmbulance" element={<div><h1>Working on it ....Emergency Ambulance Dispatch </h1></div>} />
+          <Route path="systemDataRecovery" element={<div><h1>Working on it ....Hospital Data Recovery get CSV format date extract Dowload  </h1></div>} />
         </Route>
       </Routes>
     </BrowserRouter>
