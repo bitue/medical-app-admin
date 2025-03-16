@@ -26,7 +26,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const authenticate = () => {
     if (!email || !password) return;
     setLoading(true);
-    fetch('https://www.medical-app.online/auth/signin', {
+    fetch('https://www.medical-app.online/admin/signin', {
       method: 'POST',
       headers: {
         'accept': 'application/json',
