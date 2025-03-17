@@ -15,7 +15,9 @@ const PatientDetailsPage: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`https://www.medical-app.online/patient/find-by-email?email=${email}`);
+      const q = `https://www.medical-app.online/patient/${email}`
+      console.log(q);
+      const response = await fetch(`https://www.medical-app.online/patient/${email}`);
       const data = await response.json();
 
       if (data.status) {

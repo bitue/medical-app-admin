@@ -335,10 +335,10 @@ export default function PatientSearch() {
 
   const onSearch = () => {
     setLoading(true);
-    const q: string = `https://www.medical-app.online/patient/find-by-email?email=${searchQuery}`;
+    const q: string = `https://www.medical-app.online/patient/${searchQuery}`;
     console.log(q, "+++++++++++++");
 
-    fetch(`https://www.medical-app.online/patient/find-by-email?email=${searchQuery}`, {
+    fetch(`https://www.medical-app.online/patient/${searchQuery}`, {
       method: "GET",
       headers: {
         accept: "application/json",
