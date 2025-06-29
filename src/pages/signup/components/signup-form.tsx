@@ -71,7 +71,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
       const data = await response.json();
       
       if (response.ok && data.status) {
-        toast.success('OTP sent to your email!');
+        toast.success(data?.message);
         setOtpSent(true);
         setVerificationToken(data.data.token);
       } else {
