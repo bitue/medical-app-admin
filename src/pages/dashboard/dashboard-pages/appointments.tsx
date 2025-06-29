@@ -145,6 +145,7 @@ export default function AppointmentsGrid() {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [expandedCard, setExpandedCard] = useState<number | null>(null)
+  const [approvingAppointment, setApprovingAppointment] = useState<number | null>(null)
 
   const fetchAppointments = async () => {
     try {
@@ -174,6 +175,40 @@ export default function AppointmentsGrid() {
       toast.error('Failed to fetch appointments')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const approveAppointment = async (appointmentId: number) => {
+    try {
+      setApprovingAppointment(appointmentId)
+      
+      const response = await fetch(`https://www.medical-app.online/appointments/${appointmentId}/approve`, {
+        method: 'PATCH',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+        }
+      })
+
+      const data = await response.json()
+      
+      if (response.ok && data.status) {
+        toast.success('Appointment approved successfully!')
+        // Update the appointment in the local state
+        setAppointments(prev => prev.map(appointment => 
+          appointment.id === appointmentId 
+            ? { ...appointment, isApproved: true }
+            : appointment
+        ))
+      } else {
+        toast.error(data.message || 'Failed to approve appointment')
+      }
+    } catch (err) {
+      console.error('Error approving appointment:', err)
+      toast.error('Failed to approve appointment')
+    } finally {
+      setApprovingAppointment(null)
     }
   }
 
@@ -353,22 +388,46 @@ export default function AppointmentsGrid() {
                 )}
               </Button>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm">View Details</Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Appointment Details</DialogTitle>
-                    <DialogDescription>
-                        Appointment with Dr. {appointment.doctor.user.username} on {formatDate(appointment.appointmentDate)}
-                        <br />
-                        Time: {appointment.appointmentSlot}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <AppointmentDetails appointment={appointment} />
-                </DialogContent>
-              </Dialog>
+              <div className="flex gap-2">
+                {!appointment.isApproved && (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => approveAppointment(appointment.id)}
+                    disabled={approvingAppointment === appointment.id}
+                    className="flex items-center gap-1"
+                  >
+                    {approvingAppointment === appointment.id ? (
+                      <>
+                        <LoaderCircle className="h-3 w-3 animate-spin" />
+                        Approving...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-3 w-3" />
+                        Approve
+                      </>
+                    )}
+                  </Button>
+                )}
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm">View Details</Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Appointment Details</DialogTitle>
+                      <DialogDescription>
+                          Appointment with Dr. {appointment.doctor.user.username} on {formatDate(appointment.appointmentDate)}
+                          <br />
+                          Time: {appointment.appointmentSlot}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <AppointmentDetails appointment={appointment} />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardFooter>
 
             {expandedCard === appointment.id && (
