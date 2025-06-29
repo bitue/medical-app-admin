@@ -8,7 +8,8 @@ export default function UserInformation() {
     fetch('https://www.medical-app.online/patient', {
       method: 'GET',
       headers: {
-        accept: 'application/json'
+        accept: 'application/json',
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
       }
     })
       .then((res) => res.json())
@@ -32,7 +33,13 @@ export default function UserInformation() {
       <h2 className="mb-6 text-2xl font-bold">Patient Overview</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {userDetails.map((patient, index) => (
-          <PatientCard key={index} name={patient?.userId?.username} email={patient?.userId?.email} medicationCount={patient?.currentMedications?.length} operationCount={patient?.operationHistories?.length} />
+          <PatientCard 
+            key={index} 
+            name={patient?.user?.username} 
+            email={patient?.user?.email} 
+            medicationCount={patient?.currentMedications?.length} 
+            operationCount={patient?.operationHistories?.length} 
+          />
         ))}
       </div>
     </div>

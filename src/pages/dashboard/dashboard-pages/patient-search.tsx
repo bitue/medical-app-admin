@@ -198,27 +198,51 @@ export default function PatientSearch() {
   const [patientData, setPatientData] = useState<any>(null);
 
   const onSearch = () => {
+    if (!searchQuery.trim()) {
+      toast.error("Please enter an email address");
+      return;
+    }
+    
     setLoading(true);
-    fetch(`https://www.medical-app.online/patient/find-by-email?email=${searchQuery}`, {
-      method: 'GET',
+    fetch(`https://www.medical-app.online/patient/getPatientByEmail`, {
+      method: 'POST',
       headers: {
-        accept: 'application/json'
-      }
+        'Content-Type': 'application/json',
+        accept: 'application/json',
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+      },
+      body: JSON.stringify({
+        email: searchQuery
+      })
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
       .then((data) => {
+        console.log('API Response:', data);
+        
         if (!data.status) {
           console.error('Patient not found');
-          toast.error(data.message);
+          toast.error(data.message || 'Patient not found');
+          setPatientData(null);
           setLoading(false);
           return;
         }
-        console.log(data);
+        
+        if (data.data) {
         setPatientData(data);
+          toast.success('Patient found successfully!');
+        } else {
+          toast.error('Invalid response format');
+          setPatientData(null);
+        }
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error:', error);
+        toast.error('Failed to search for patient');
+        setPatientData(null);
         setLoading(false);
       });
   };
@@ -229,12 +253,24 @@ export default function PatientSearch() {
       <div className="flex w-full max-w-sm items-center space-x-2">
         <Input
           type="email"
-          placeholder="Email"
+          placeholder="Enter patient email"
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              onSearch();
+            }
+          }}
           value={searchQuery}
         />
-        <Button onClick={() => onSearch()}>
-          Search {loading && <LoaderCircle className="animate-spin" />}
+        <Button onClick={onSearch} disabled={loading}>
+          {loading ? (
+            <>
+              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+              Searching...
+            </>
+          ) : (
+            'Search'
+          )}
         </Button>
       </div>
 
@@ -242,7 +278,16 @@ export default function PatientSearch() {
       {patientData ? (
         <PatientDetailsPage patientData={patientData} />
       ) : (
-        <h2 className="mt-6 text-2xl font-bold">No patient found</h2>
+        <div className="mt-6 text-center">
+          <h2 className="text-xl font-semibold text-muted-foreground">
+            {loading ? 'Searching for patient...' : 'Enter an email to search for a patient'}
+          </h2>
+          {!loading && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Try searching with: taheirahmedashraf@gmail.com
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
