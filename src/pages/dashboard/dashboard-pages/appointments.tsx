@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Clock, FileText, User, Check, X, ChevronDown, ChevronUp, DoorClosedIcon as CloseIcon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Clock, FileText, User, Check, X, ChevronDown, ChevronUp, DoorClosedIcon as CloseIcon, LoaderCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,157 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
-// Sample data from your JSON
-const appointmentsData = {
-  code: 200,
-  message: "All appointments retrieved successfully!",
-  data: [
-    {
-      id: 6,
-      accessTime: 10,
-      isApproved: true,
-      createdAt: "2025-03-12T19:37:25.344Z",
-      updatedAt: "2025-03-12T19:37:25.344Z",
-      doctor: {
-        id: 1,
-        user: {
-          id: 2,
-          username: "Stephen",
-          email: "takepet279@payposs.com",
-          role: "doctor",
-        },
-      },
-      patient: {
-        id: 1,
-        userId: {
-          id: 1,
-          username: "Rakib",
-          email: "rakibiuaece@gmail.com",
-          role: "patient",
-        },
-      },
-      reports: [
-        {
-          id: 2,
-          title: "2nd report ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/f88279a3-cbb9-48ba-adfd-96ebe10268fa-prescription_1741716787676.jpg",
-          reportDate: "2025-03-04T18:12:00.000Z",
-        },
-      ],
-      prescriptions: [
-        {
-          id: 4,
-          title: "First prescription ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/a5dce4a5-e69c-4ac2-a713-e7f3a7f8cf04-prescription_1741718830655.jpg",
-          prescriptionDate: "2025-03-03T18:46:00.000Z",
-        },
-      ],
-    },
-    {
-      id: 7,
-      accessTime: 25,
-      isApproved: true,
-      createdAt: "2025-03-12T19:43:00.098Z",
-      updatedAt: "2025-03-12T19:43:00.098Z",
-      doctor: {
-        id: 1,
-        user: {
-          id: 2,
-          username: "Stephen",
-          email: "takepet279@payposs.com",
-          role: "doctor",
-        },
-      },
-      patient: {
-        id: 1,
-        userId: {
-          id: 1,
-          username: "Rakib",
-          email: "rakibiuaece@gmail.com",
-          role: "patient",
-        },
-      },
-      reports: [
-        {
-          id: 1,
-          title: "First report ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/fa7abc45-bf1f-407e-8605-ed852c89466e-prescription_1741716342316.jpg",
-          reportDate: "2025-03-11T18:05:00.000Z",
-        },
-        {
-          id: 2,
-          title: "2nd report ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/f88279a3-cbb9-48ba-adfd-96ebe10268fa-prescription_1741716787676.jpg",
-          reportDate: "2025-03-04T18:12:00.000Z",
-        },
-      ],
-      prescriptions: [
-        {
-          id: 4,
-          title: "First prescription ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/a5dce4a5-e69c-4ac2-a713-e7f3a7f8cf04-prescription_1741718830655.jpg",
-          prescriptionDate: "2025-03-03T18:46:00.000Z",
-        },
-      ],
-    },
-    {
-      id: 8,
-      accessTime: 40,
-      isApproved: false,
-      createdAt: "2025-03-13T12:56:57.542Z",
-      updatedAt: "2025-03-13T12:56:57.542Z",
-      doctor: {
-        id: 1,
-        user: {
-          id: 2,
-          username: "Stephen",
-          email: "takepet279@payposs.com",
-          role: "doctor",
-        },
-      },
-      patient: {
-        id: 1,
-        userId: {
-          id: 1,
-          username: "Rakib",
-          email: "rakibiuaece@gmail.com",
-          role: "patient",
-        },
-      },
-      reports: [
-        {
-          id: 1,
-          title: "First report ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/fa7abc45-bf1f-407e-8605-ed852c89466e-prescription_1741716342316.jpg",
-          reportDate: "2025-03-11T18:05:00.000Z",
-        },
-        {
-          id: 2,
-          title: "2nd report ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/f88279a3-cbb9-48ba-adfd-96ebe10268fa-prescription_1741716787676.jpg",
-          reportDate: "2025-03-04T18:12:00.000Z",
-        },
-      ],
-      prescriptions: [
-        {
-          id: 4,
-          title: "First prescription ",
-          docPath:
-            "https://medical-bucket.s3.eu-north-1.amazonaws.com/a5dce4a5-e69c-4ac2-a713-e7f3a7f8cf04-prescription_1741718830655.jpg",
-          prescriptionDate: "2025-03-03T18:46:00.000Z",
-        },
-      ],
-    },
-  ],
-}
+import { toast } from "sonner"
 
 interface ImageViewerProps {
   imageUrl: string
@@ -291,7 +141,45 @@ const AppointmentDetails = ({ appointment }: AppointmentDetailsProps) => {
 }
 
 export default function AppointmentsGrid() {
+  const [appointments, setAppointments] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
   const [expandedCard, setExpandedCard] = useState<number | null>(null)
+
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch('https://www.medical-app.online/appointments', {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+        }
+      })
+
+      const data = await response.json()
+      
+      if (data.status && data.data) {
+        setAppointments(data.data)
+        toast.success('Appointments loaded successfully!')
+      } else {
+        setError(data.message || 'Failed to load appointments')
+        toast.error(data.message || 'Failed to load appointments')
+      }
+    } catch (err) {
+      console.error('Error fetching appointments:', err)
+      setError('Failed to fetch appointments')
+      toast.error('Failed to fetch appointments')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAppointments()
+  }, [])
 
   const toggleExpand = (id: number) => {
     setExpandedCard(expandedCard === id ? null : id)
@@ -307,10 +195,59 @@ export default function AppointmentsGrid() {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">My Appointments</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">My Appointments</h1>
+        <Button 
+          variant="outline" 
+          onClick={fetchAppointments} 
+          disabled={loading}
+          className="flex items-center gap-2"
+        >
+          {loading ? (
+            <>
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              Loading...
+            </>
+          ) : (
+            'Refresh'
+          )}
+        </Button>
+      </div>
 
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center gap-2">
+            <LoaderCircle className="h-6 w-6 animate-spin" />
+            <span>Loading appointments...</span>
+          </div>
+        </div>
+      )}
+
+      {error && !loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={fetchAppointments} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && appointments.length === 0 && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">No appointments found</p>
+            <Button onClick={fetchAppointments} variant="outline">
+              Refresh
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && appointments.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {appointmentsData.data.map((appointment) => (
+          {appointments.map((appointment) => (
           <Card key={appointment.id} className="overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
@@ -320,7 +257,7 @@ export default function AppointmentsGrid() {
                   {appointment.isApproved ? "Approved" : "Pending"}
                 </Badge>
               </div>
-              <CardDescription>{formatDate(appointment.createdAt)}</CardDescription>
+                <CardDescription>{formatDate(appointment.appointmentDate)}</CardDescription>
             </CardHeader>
 
             <CardContent className="pb-2">
@@ -332,6 +269,27 @@ export default function AppointmentsGrid() {
                   </span>
                 </div>
 
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      <span className="font-medium">Patient:</span> {appointment.patient.user.username}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      <span className="font-medium">Appointment Date:</span> {formatDate(appointment.appointmentDate)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      <span className="font-medium">Time Slot:</span> {appointment.appointmentSlot}
+                    </span>
+                  </div>
+
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
@@ -342,25 +300,32 @@ export default function AppointmentsGrid() {
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
-                    <span className="font-medium">Reports:</span> {appointment.reports.length}
+                      <span className="font-medium">Reports:</span> {appointment.reports?.length || 0}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      <span className="font-medium">Prescriptions:</span> {appointment.prescriptions?.length || 0}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
-                    <span className="font-medium">Prescriptions:</span> {appointment.prescriptions.length}
+                      <span className="font-medium">Medications:</span> {appointment.providedMedications?.length || 0}
                   </span>
                 </div>
 
                 {/* Preview of first document if available */}
-                {(appointment.reports.length > 0 || appointment.prescriptions.length > 0) && (
+                  {(appointment.reports?.length > 0 || appointment.prescriptions?.length > 0) && (
                   <div className="pt-2">
                     <p className="text-xs font-medium mb-2">Latest Document:</p>
                     <div className="relative h-24 w-full rounded-md overflow-hidden border bg-muted">
                       <img
                         src={
-                          appointment.reports.length > 0
+                            appointment.reports?.length > 0
                             ? appointment.reports[0].docPath
                             : appointment.prescriptions[0].docPath
                         }
@@ -396,7 +361,9 @@ export default function AppointmentsGrid() {
                   <DialogHeader>
                     <DialogTitle>Appointment Details</DialogTitle>
                     <DialogDescription>
-                      Appointment with Dr. {appointment.doctor.user.username} on {formatDate(appointment.createdAt)}
+                        Appointment with Dr. {appointment.doctor.user.username} on {formatDate(appointment.appointmentDate)}
+                        <br />
+                        Time: {appointment.appointmentSlot}
                     </DialogDescription>
                   </DialogHeader>
                   <AppointmentDetails appointment={appointment} />
@@ -407,28 +374,47 @@ export default function AppointmentsGrid() {
             {expandedCard === appointment.id && (
               <div className="px-6 pb-4">
                 <div className="pt-2 border-t">
-                  <h4 className="text-sm font-medium mb-2">Recent Activity</h4>
-                  {appointment.reports.length > 0 && (
+                    <h4 className="text-sm font-medium mb-2">Appointment Details</h4>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <p>Date: {formatDate(appointment.appointmentDate)}</p>
+                      <p>Time: {appointment.appointmentSlot}</p>
+                      <p>Duration: {appointment.accessTime} minutes</p>
+                      <p>Status: {appointment.isApproved ? 'Approved' : 'Pending'}</p>
+                    </div>
+                    
+                    <h4 className="text-sm font-medium mb-2 mt-4">Recent Activity</h4>
+                    {appointment.reports?.length > 0 && (
                     <div className="mb-2">
                       <p className="text-xs text-muted-foreground">
                         Latest Report: {appointment.reports[0].title} ({formatDate(appointment.reports[0].reportDate)})
                       </p>
                     </div>
                   )}
-                  {appointment.prescriptions.length > 0 && (
-                    <div>
+                    {appointment.prescriptions?.length > 0 && (
+                      <div className="mb-2">
                       <p className="text-xs text-muted-foreground">
                         Latest Prescription: {appointment.prescriptions[0].title} (
                         {formatDate(appointment.prescriptions[0].prescriptionDate)})
                       </p>
                     </div>
                   )}
+                    {appointment.providedMedications?.length > 0 && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Medications Provided: {appointment.providedMedications.length} items
+                        </p>
+                      </div>
+                    )}
+                    {(!appointment.reports?.length && !appointment.prescriptions?.length && !appointment.providedMedications?.length) && (
+                      <p className="text-xs text-muted-foreground">No activity recorded yet</p>
+                    )}
                 </div>
               </div>
             )}
           </Card>
         ))}
       </div>
+      )}
     </div>
   )
 }
