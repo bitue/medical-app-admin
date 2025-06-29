@@ -26,7 +26,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const authenticate = () => {
     if (!email || !password) return;
     setLoading(true);
-    fetch('https://www.medical-app.online/admin/signin', {
+    fetch('https://www.medical-app.online/auth/signin', {
       method: 'POST',
       headers: {
         'accept': 'application/json',
@@ -111,7 +111,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{' '}
-              <a href="#" className="underline underline-offset-4">
+              <a href="/signup" className="underline underline-offset-4">
                 Sign up
               </a>
             </div>

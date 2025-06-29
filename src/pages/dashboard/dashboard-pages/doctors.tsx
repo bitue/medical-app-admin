@@ -147,7 +147,7 @@ export default function DoctorsGrid() {
 
   const toggleDoctorApproval = async (doctorId: number, currentApprovalStatus: boolean) => {
     try {
-      const response = await fetch(`https://www.medical-app.online/doctors/${doctorId}/approve`, {
+      const response = await fetch(`https://www.medical-app.online/doctors/${doctorId}/${currentApprovalStatus === false ? 'approve' : 'disapproved'}`, {
         method: 'PATCH',
         headers: {
           'accept': 'application/json',
