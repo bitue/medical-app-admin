@@ -123,7 +123,7 @@ export default function DoctorsGrid() {
         method: 'GET',
         headers: {
           'accept': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+          'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
         }
       })
 
@@ -151,7 +151,7 @@ export default function DoctorsGrid() {
         method: 'PATCH',
         headers: {
           'accept': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+          'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
         }
       })
 

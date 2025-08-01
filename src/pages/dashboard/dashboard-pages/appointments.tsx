@@ -156,7 +156,7 @@ export default function AppointmentsGrid() {
         method: 'GET',
         headers: {
           'accept': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+          'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
         }
       })
 
@@ -187,7 +187,7 @@ export default function AppointmentsGrid() {
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+          'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
         }
       })
 
@@ -322,8 +322,8 @@ export default function AppointmentsGrid() {
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">
                       <span className="font-medium">Time Slot:</span> {appointment.appointmentSlot}
-                    </span>
-                  </div>
+                  </span>
+                </div>
 
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
@@ -411,22 +411,22 @@ export default function AppointmentsGrid() {
                   </Button>
                 )}
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm">View Details</Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Appointment Details</DialogTitle>
-                      <DialogDescription>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm">View Details</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Appointment Details</DialogTitle>
+                    <DialogDescription>
                           Appointment with Dr. {appointment.doctor.user.username} on {formatDate(appointment.appointmentDate)}
                           <br />
                           Time: {appointment.appointmentSlot}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <AppointmentDetails appointment={appointment} />
-                  </DialogContent>
-                </Dialog>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AppointmentDetails appointment={appointment} />
+                </DialogContent>
+              </Dialog>
               </div>
             </CardFooter>
 
@@ -466,7 +466,7 @@ export default function AppointmentsGrid() {
                     )}
                     {(!appointment.reports?.length && !appointment.prescriptions?.length && !appointment.providedMedications?.length) && (
                       <p className="text-xs text-muted-foreground">No activity recorded yet</p>
-                    )}
+                  )}
                 </div>
               </div>
             )}

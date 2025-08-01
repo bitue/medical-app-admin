@@ -1,4 +1,4 @@
-import { Hospital } from 'lucide-react';
+import { Hospital, LogOut } from 'lucide-react';
 
 import {
   Sidebar,
@@ -14,6 +14,7 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { Link } from 'react-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 // This is sample data.
 const data = {
@@ -52,14 +53,18 @@ const data = {
           title: 'Doctor Approval',
           url: 'doctor-approval'
         },
-        {
-          title: 'Emergency Ambulance',
-          url: 'emergency-ambulance'
-        },
-        {
-          title: 'Report Delivery',
-          url: 'report-delivery'
-        }
+        // {
+        //   title: 'Prescription Management',
+        //   url: 'prescriptions'
+        // }
+        // {
+        //   title: 'Emergency Ambulance',
+        //   url: 'emergency-ambulance'
+        // },
+        // {
+        //   title: 'Report Delivery',
+        //   url: 'report-delivery'
+        // }
         // {
         //   title: 'Optimizing',
         //   url: '#'
@@ -160,6 +165,14 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    // Use auth context logout function
+    logout();
+    window.location.href = '/signin'; // Redirect to signin page
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -193,7 +206,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuSub>
                     {item.items.map((item) => (
                       <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
+                        <SidebarMenuSubButton asChild>
                           <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -202,6 +215,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 ) : null}
               </SidebarMenuItem>
             ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        
+        {/* Logout Section */}
+        <SidebarGroup className="mt-auto">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <LogOut className="size-4" />
+                <span>Logout</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

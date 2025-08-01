@@ -209,7 +209,7 @@ export default function PatientSearch() {
       headers: {
         'Content-Type': 'application/json',
         accept: 'application/json',
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
       },
       body: JSON.stringify({
         email: searchQuery

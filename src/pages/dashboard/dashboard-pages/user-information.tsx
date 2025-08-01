@@ -9,7 +9,7 @@ export default function UserInformation() {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token') || '{}').token}`,
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem('token') || '{}').token}`,
       }
     })
       .then((res) => res.json())

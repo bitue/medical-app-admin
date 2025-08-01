@@ -289,9 +289,9 @@ export default function PatientDetailsPage({ patientData }: {patientData: any}) 
                                 <ul className="mt-1 list-inside list-disc">
                                   {Array.isArray(medication.doses) 
                                     ? medication.doses.map((dose: string, index: number) => (
-                                        <li key={index} className="text-sm">
-                                          {dose}
-                                        </li>
+                                    <li key={index} className="text-sm">
+                                      {dose}
+                                    </li>
                                       ))
                                     : medication.doses.split(',').map((dose: string, index: number) => (
                                         <li key={index} className="text-sm">
