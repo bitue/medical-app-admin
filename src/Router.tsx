@@ -6,6 +6,7 @@ import SignupPage from "./pages/signup/signup.page";
 import PatientSearch from "./pages/dashboard/dashboard-pages/patient-search";
 import AppointmentsGrid from "./pages/dashboard/dashboard-pages/appointments";
 import DoctorsGrid from "./pages/dashboard/dashboard-pages/doctors";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function Router() {
   return (
@@ -15,7 +16,14 @@ export function Router() {
         <Route path="/" element={<SigninPage />} />
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/dashboard" element={<Dashboard />}>
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        >
           <Route index path="patient-information" element={<UserInformation />} />
           <Route path="patient-search" element={<PatientSearch />} />
           <Route path="appointments" element={<AppointmentsGrid />} />

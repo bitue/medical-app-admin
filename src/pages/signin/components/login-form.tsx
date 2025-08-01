@@ -7,6 +7,7 @@ import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
 //   curl -X 'POST' \
 //   'https://www.medical-app.online/auth/signin' \
@@ -42,11 +44,13 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         setLoading(false);
         console.log(data);
         if (data.message === "Invalid credentials!") {
-          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
           toast.error('Invalid credentials!');
           return
         }
-        localStorage.setItem('token', JSON.stringify(data.data));
+        
+        // Use sessionStorage instead of localStorage and login through auth context
+        login(JSON.stringify(data.data));
         if (data.data.token) {
           toast.success('Login successful!');
           navigate('/dashboard');
@@ -58,8 +62,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardTitle className="text-2xl">Sign In</CardTitle>
+          <CardDescription>Enter your credentials to access your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form>
@@ -76,21 +80,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  required
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
               <Button
@@ -98,19 +95,22 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 className="w-full"
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log({ email, password });
                   authenticate();
                 }}
+                disabled={loading}
               >
-                Login
-                {loading && <LoaderCircle className="animate-spin" />}
+                {loading ? (
+                  <>
+                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
-              {/* <Button variant="outline" className="w-full">
-                Login with Google
-              </Button> */}
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
+              Don't have an account?{' '}
               <a href="/signup" className="underline underline-offset-4">
                 Sign up
               </a>

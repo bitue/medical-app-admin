@@ -15,9 +15,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
     password: '',
     confirmPassword: '',
     dob: '',
-    role: '',
-    gender: '',
-    profileImage: ''
+    gender: ''
   });
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -117,7 +115,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
         toast.success('Email verified successfully!');
         setEmailVerified(true);
         setOtpSent(false);
-        localStorage.setItem('token', JSON.stringify({
+        sessionStorage.setItem('token', JSON.stringify({
           token: verificationToken,
           email: formData.email
         }));
@@ -157,10 +155,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
       toast.error('Date of birth is required');
       return false;
     }
-    if (!formData.role) {
-      toast.error('Role is required');
-      return false;
-    }
+
     if (!formData.gender) {
       toast.error('Gender is required');
       return false;
@@ -186,9 +181,9 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
           password: formData.password,
           confirmPassword: formData.confirmPassword,
           dob: formData.dob,
-          role: formData.role,
+          role: 'admin', // Default to admin
           gender: formData.gender,
-          profileImage: formData.profileImage || null
+          profileImage: '#' // Default to "#"
         }),
       });
 
@@ -375,21 +370,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                 />
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="role">Role</Label>
-                <select
-                  id="role"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={formData.role}
-                  onChange={(e) => handleInputChange('role', e.target.value)}
-                  required
-                >
-                  <option value="">Select your role</option>
-                  <option value="admin">Admin</option>
-                  <option value="doctor">Doctor</option>
-                  <option value="patient">Patient</option>
-                </select>
-              </div>
+
 
               <div className="grid gap-2">
                 <Label htmlFor="gender">Gender</Label>
@@ -407,16 +388,7 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                 </select>
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="profileImage">Profile Image URL (Optional)</Label>
-                <Input
-                  id="profileImage"
-                  type="url"
-                  placeholder="https://example.com/images/profile.jpg"
-                  value={formData.profileImage}
-                  onChange={(e) => handleInputChange('profileImage', e.target.value)}
-                />
-              </div>
+
 
               <Button
                 type="submit"
